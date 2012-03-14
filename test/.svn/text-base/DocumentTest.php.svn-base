@@ -1,0 +1,38 @@
+<?php
+
+class DocumentTest extends PHPUnit_Framework_TestCase {
+	public function test_IdsAreNullByDefault() {
+		$doc = new Document();
+		self::assertNull($doc->getId());
+
+		$expected_properties = array('id' => null);
+		self::assertEquals($expected_properties, $doc->toArray());
+	}
+
+	public function test_IdsAreIntegers() {
+		$id = rand();
+		$doc = new Document(array('id' => $id));
+		self::assertEquals($id, $doc->getId());
+
+		$string_id = uniqid();
+		$doc = new Document(array('id' => $string_id));
+		$expected_id = (int) $string_id;
+		self::assertEquals($expected_id, $doc->getId());
+	}
+
+	public function test_IdsAreImmutable() {
+		$orig_id = rand();
+		$doc = new Document(array('id' => $orig_id));
+		self::assertEquals($orig_id, $doc->getId());
+
+		$new_id = rand();
+		$doc->merge(array('id' => $new_id));
+		self::assertEquals($orig_id, $doc->getId());
+	}
+	
+	public function test_toArrayReturnsAllProperties() {
+		$properties = array('id' => rand(), uniqid() => uniqid());
+		$doc = new Document($properties);
+		self::assertEquals($properties, $doc->toArray());
+	}
+}
